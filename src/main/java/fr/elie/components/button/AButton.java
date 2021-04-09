@@ -15,6 +15,7 @@ public class AButton extends JComponent implements MouseListener {
 
     private String text;
     private Color textColor;
+    public boolean hover = false;
 
     public AButton()
     {
@@ -31,9 +32,18 @@ public class AButton extends JComponent implements MouseListener {
                 eventListener.onEvent(new AEvent(this, AEvent.AEventList.ON_BUTTON_CLICKED));
     }
 
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+        setCursor(new Cursor(Cursor.HAND_CURSOR));
+        System.out.println("hover");
+        hover = true;
+        repaint();
+    }
 
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+        hover = false;
+        repaint();
+
+    }
 
     public void addEventListener(AEventListener eventListener) {
        this.eventListeners.add(eventListener);

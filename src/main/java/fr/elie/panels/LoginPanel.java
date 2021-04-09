@@ -2,6 +2,7 @@ package fr.elie.panels;
 
 import fr.elie.Lotus;
 import fr.elie.components.button.ATexturedButton;
+import fr.elie.components.label.ACustomLabel;
 import fr.elie.event.AEvent;
 import fr.elie.event.AEventListener;
 
@@ -12,10 +13,12 @@ public class LoginPanel extends JPanel implements AEventListener {
 
     JTextField username = new JTextField("username");
 
-    ATexturedButton close_button = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("close_button.png"));
-    ATexturedButton reduce_button = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("reduce_button.png"));
+    ATexturedButton close_button = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("close_button.png"), Lotus.get().resourceManager.getBufferedImage("close_button_hover.png"));
+    ATexturedButton reduce_button = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("reduce_button.png"), Lotus.get().resourceManager.getBufferedImage("reduce_button_hover.png"));
     ATexturedButton connect_button = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("icon.png"));
 
+
+    ACustomLabel test = new ACustomLabel("This is a test!");
     JLabel no_account = new JLabel("Create an account ?");
 
     public LoginPanel()
@@ -50,6 +53,11 @@ public class LoginPanel extends JPanel implements AEventListener {
         no_account.setHorizontalAlignment(SwingConstants.CENTER);
         no_account.setFont(new Font("Serif", Font.PLAIN, 20));
         add(no_account);
+
+        // test custom label
+        test.setLocation(150, 150);
+        test.setSize(150,150);
+        add(test);
 
         setBackground(new Color(15, 15, 15));
     }
