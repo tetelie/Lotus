@@ -7,15 +7,18 @@ import javax.swing.*;
 
 public class Login extends JFrame {
 
+
     public Login()
     {
         setTitle("Lotus");
         setIconImage(Lotus.get().resourceManager.getBufferedImage("icon.png"));
-        setSize(450,600);
+        setSize(360,480);
         setUndecorated(true);
-        setContentPane(new LoginPanel());
+        JPanel jPanel = new LoginPanel();
+        setContentPane(jPanel);
+        Lotus.get().frameManager.addMouseMover(this, jPanel);
         setLocationRelativeTo(null);
-        setVisible(true);
+        Lotus.get().frameManager.switchFrame(this);
     }
 
 }
