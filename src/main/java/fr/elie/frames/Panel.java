@@ -9,7 +9,7 @@ public class Panel extends JFrame {
 
     public Panel()
     {
-        setSize(1000, 600);
+        setSize(1280, 720);
         setUndecorated(true);
         setLocationRelativeTo(null);
         JPanel panel = new MainPanel();

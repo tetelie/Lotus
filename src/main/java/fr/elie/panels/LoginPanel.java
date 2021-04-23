@@ -122,7 +122,7 @@ public class LoginPanel extends JPanel implements AEventListener {
         {
             System.out.println("Connect!");
             // TODO connect system with server
-            if(id.getText().equals("tetelie"))
+            if(id.getText().equals("tetelie") || id.getText().equals("username"))
             {
                 Lotus.get().frameManager.switchFrame(Lotus.get().panelFrame);
             }
