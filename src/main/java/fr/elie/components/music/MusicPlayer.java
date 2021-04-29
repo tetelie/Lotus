@@ -3,9 +3,13 @@ package fr.elie.components.music;
 import fr.elie.Lotus;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import javax.swing.*;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class MusicPlayer {
 
@@ -23,10 +27,10 @@ public class MusicPlayer {
 
     public void changeMusic(String fileName)
     {
-        fileName=new File("C:/Users/elied/Desktop/Developpement/project/Lotus/src/main/resources/6058-come-with-me-now-feat-austin-mensales.mp3").toURI().toString();
-        media = new Media(fileName);
+        String fileName_path=new File(fileName).toURI().toString();
+        media = new Media(fileName_path);
         mediaPlayer = new MediaPlayer(media);
-        setTitle(fileName.replaceAll(".mp3", ""));
+        setTitle(fileName_path.replaceAll(".mp3", ""));
     }
 
     public void changeTitle(String title, JLabel label)
@@ -60,6 +64,30 @@ public class MusicPlayer {
         return false;
     }
 
+    public boolean isPlaying()
+    {
+        return mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING);
+    }
+
+    public void setTimeSeconds(double time)
+    {
+        mediaPlayer.setStartTime(Duration.seconds(time));
+    }
+
+    public double getTimeSeconds()
+    {
+        return mediaPlayer.getCurrentTime().toSeconds();
+    }
+
+    public Duration getTime()
+    {
+        return mediaPlayer.getCurrentTime();
+    }
+
+    public double getCurrentMusicDuration()
+    {
+        return media.getDuration().toSeconds();
+    }
 
     public String getCurrentTitle() {
         return title;
@@ -67,6 +95,24 @@ public class MusicPlayer {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String formatDuration() {
+        int sec = (int)getTimeSeconds();
+        Date d = new Date(sec * 1000L);
+        SimpleDateFormat df = new SimpleDateFormat("mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String time = df.format(d);
+        return time;
+    }
+
+
+    public String formatDuration(int sec) {
+        Date d = new Date(sec * 1000L);
+        SimpleDateFormat df = new SimpleDateFormat("mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String time = df.format(d);
+        return time;
     }
 
 }

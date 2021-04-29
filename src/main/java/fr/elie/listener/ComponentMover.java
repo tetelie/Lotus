@@ -6,23 +6,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class MoveMouseListener implements MouseListener, MouseMotionListener {
+public class ComponentMover implements MouseListener, MouseMotionListener {
 
     JComponent target;
     Point start_drag;
     Point start_loc;
 
+    private boolean restrictX = false;
+    private boolean restrictY = false;
+    private double x_Min;
+    private double x_Max;
+    private double y_Min;
+    private double y_Max;
 
-
-    public MoveMouseListener(JComponent target) {
+    public ComponentMover(JComponent target) {
         this.target = target;
-    }
-
-    public static JFrame getFrame(Container target) {
-        if (target instanceof JFrame) {
-            return (JFrame) target;
-        }
-        return getFrame(target.getParent());
     }
 
     Point getScreenLocation(MouseEvent e) {
@@ -43,7 +41,7 @@ public class MoveMouseListener implements MouseListener, MouseMotionListener {
 
     public void mousePressed(MouseEvent e) {
         this.start_drag = this.getScreenLocation(e);
-        this.start_loc = this.getFrame(this.target).getLocation();
+        this.start_loc = target.getLocation();
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -53,15 +51,51 @@ public class MoveMouseListener implements MouseListener, MouseMotionListener {
         Point current = this.getScreenLocation(e);
         Point offset = new Point((int) current.getX() - (int) start_drag.getX(),
                 (int) current.getY() - (int) start_drag.getY());
-        JFrame frame = this.getFrame(target);
         Point new_location = new Point(
                 (int) (this.start_loc.getX() + offset.getX()), (int) (this.start_loc
                 .getY() + offset.getY()));
 
-        frame.setLocation(new_location);
+        if(restrictX)
+        {
+            if(new_location.getX() > x_Max)
+            {
+                new_location.setLocation(x_Max, new_location.getY());
+            }
+            if(new_location.getX() < x_Min)
+            {
+                new_location.setLocation(x_Min, new_location.getY());
+            }
+        }
+
+        if(restrictY)
+        {
+            if(new_location.getY() > y_Max)
+            {
+                new_location.setLocation(new_location.getX(), y_Max);
+            }
+            if(new_location.getY() < y_Min)
+            {
+                new_location.setLocation(new_location.getX(), y_Min);
+            }
+        }
+
+        target.setLocation(new_location);
     }
 
     public void mouseMoved(MouseEvent e) {
     }
 
+    public void addRestrictX(double min, double max)
+    {
+        x_Min = min;
+        x_Max = max;
+        restrictX = true;
+    }
+
+    public void addRestrictY(double min, double max)
+    {
+        y_Min = min;
+        y_Max = max;
+        restrictY = true;
+    }
 }

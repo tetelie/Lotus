@@ -5,6 +5,9 @@ import fr.elie.components.button.ATexturedButton;
 import fr.elie.components.image.Aimage;
 import fr.elie.event.AEvent;
 import fr.elie.event.AEventListener;
+import fr.elie.listener.ComponentMover;
+import fr.elie.listener.MoveMouseListener;
+import javafx.util.Duration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +21,7 @@ import java.util.List;
 public class MainPanel extends JPanel implements AEventListener {
 
     boolean clean = false;
+    boolean was_playing;
 
     // top menu
     ATexturedButton close_button = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("close_button.png"), Lotus.get().resourceManager.getBufferedImage("close_button_hover.png"));
@@ -43,6 +47,9 @@ public class MainPanel extends JPanel implements AEventListener {
     ATexturedButton right_skip_button = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("right_skip_button.png"));
     boolean playing = false; // temporary
     JLabel music_title = new JLabel();
+
+    ATexturedButton time_selector = new ATexturedButton(Lotus.get().resourceManager.getBufferedImage("selector.png"));
+    JLabel time_displayer = new JLabel(Lotus.get().musicPlayer.formatDuration(0));
 
     public MainPanel()
     {
@@ -146,11 +153,57 @@ public class MainPanel extends JPanel implements AEventListener {
         add(right_skip_button);
 
         music_title.setText(Lotus.get().musicPlayer.getCurrentTitle());
-        music_title.setBounds(0, 509,999,30);
-        music_title.setForeground(Lotus.get().pink);
-        music_title.setHorizontalAlignment(SwingConstants.CENTER);
-        music_title.setFont(new Font("Serif", Font.PLAIN, 20));
-        //add(music_title);
+        music_title.setBounds(140, 627,400,60);
+        music_title.setForeground(Color.white);
+        //music_title.setHorizontalAlignment(SwingConstants.CENTER);
+        music_title.setFont(new Font("null", Font.PLAIN, 20));
+        //music_title.setOpaque(true);
+        add(music_title);
+
+        time_selector.setBounds(140,720-80/2-45+60-4,16,16);
+        time_selector.addEventListener(this);
+        ComponentMover selector_mover = new ComponentMover(time_selector);
+        selector_mover.addRestrictX(280/2, 1000+140);
+        selector_mover.addRestrictY(720-80/2-45+60-4,720-80/2-45+60-4);
+        time_selector.addMouseListener(selector_mover);
+        time_selector.addMouseMotionListener(selector_mover);
+        time_selector.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                was_playing = Lotus.get().musicPlayer.isPlaying();
+                Lotus.get().musicPlayer.pause();
+            }
+        });
+        time_selector.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                double current_duration = time_selector.getLocation().getX()-140;
+                System.out.println(current_duration);
+                double new_duration = Lotus.get().musicPlayer.getCurrentMusicDuration()*(current_duration/1000);
+                Lotus.get().musicPlayer.setTimeSeconds(new_duration);
+                System.out.println(Lotus.get().musicPlayer.getCurrentMusicDuration());
+                System.out.println(new_duration);
+                if(was_playing) {
+                    Lotus.get().musicPlayer.play();
+                }
+            }
+        });
+        time_selector.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                double current_duration = time_selector.getLocation().getX()-140;
+                double new_duration = Lotus.get().musicPlayer.getCurrentMusicDuration()*(current_duration/1000);
+                time_displayer.setText(Lotus.get().musicPlayer.formatDuration((int)new_duration));
+            }
+        });
+        add(time_selector);
+
+        time_displayer.setBounds(1155, 670, 125, 50);
+        time_displayer.setForeground(Color.WHITE);
+        time_displayer.setHorizontalAlignment(SwingConstants.CENTER);
+        time_displayer.setFont(new Font("null", Font.PLAIN, 25));
+        //time_displayer.setOpaque(true);
+        add(time_displayer);
     }
 
     public void onEvent(AEvent event) {
@@ -172,11 +225,8 @@ public class MainPanel extends JPanel implements AEventListener {
             System.out.println("test");
             if(playing)
             {
-                play_pause_button.setTexture(Lotus.get().resourceManager.getBufferedImage("pause_button.png"));
-                Lotus.get().musicPlayer.changeMusic("6058-come-with-me-now-feat-austin-mensales.mp3");
-                Lotus.get().musicPlayer.changeTitle("6058-come-with-me-now-feat-austin-mensales.mp3", music_title);
-                //Lotus.get().musicPlayer.updateTitle(music_title);
                 Lotus.get().musicPlayer.play();
+                play_pause_button.setTexture(Lotus.get().resourceManager.getBufferedImage("pause_button.png"));
             }else{
                 Lotus.get().musicPlayer.pause();
                 play_pause_button.setTexture(Lotus.get().resourceManager.getBufferedImage("play_button.png"));
@@ -184,7 +234,7 @@ public class MainPanel extends JPanel implements AEventListener {
             repaint();
         }else if(event.getSource() == left_skip_button && event.getType() == AEvent.AEventList.ON_BUTTON_CLICKED)
         {
-            Lotus.get().musicPlayer.changeTitle("Linkin Park - In The End (Mellen Gi & Tommee Profitt Remix)", music_title);
+            Lotus.get().musicPlayer.changeTitle("6058-come-with-me-now-feat-austin-mensales", music_title);
         }
     }
 
@@ -216,20 +266,36 @@ public class MainPanel extends JPanel implements AEventListener {
         g.drawImage(search_bar.texture, 128+16, 4, 300, 24, this);
 
         // music title bar start
-        g.setColor(Lotus.get().pink);
+        //g.setColor(Lotus.get().pink);
         //g.drawRect(0,539-30,999,30);
         // music title bar end
 
 
         // bottom menu start
-        g.setColor(Lotus.get().green);
+        //g.setColor(Lotus.get().green);
         //g.drawRect(0,539,999,60);
         // bottom menu end
+
+        // time bar
+        g.setColor(new Color(255,255,255,100));
+        g.fillRect(280/2,720-80/2-45+60, 1000+16, 7);
+        g.setColor(Color.cyan);
+        g.fillRect(280/2,720-80/2-45+60, (int)time_selector.getLocation().getX()-140+8, 7);
+        if(Lotus.get().musicPlayer.isPlaying()) {
+            int new_x = (int) ((Lotus.get().musicPlayer.getTimeSeconds() / Lotus.get().musicPlayer.getCurrentMusicDuration()) * 1000) + 140;
+            time_selector.setLocation(new_x, time_selector.getY());
+            System.out.println(Lotus.get().musicPlayer.getCurrentMusicDuration());
+            System.out.println(Lotus.get().musicPlayer.getTimeSeconds());
+            System.out.println(new_x);
+            time_displayer.setText(Lotus.get().musicPlayer.formatDuration());
+        }
     }
 
     private void unwindMenu(boolean visible)
     {
         MenuComponentList.forEach(aTexturedButton -> aTexturedButton.setVisible(visible));
+
+
     }
 
 }
