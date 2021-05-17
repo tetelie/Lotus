@@ -1,6 +1,5 @@
-package fr.elie.components.music;
+package fr.elie.music;
 
-import fr.elie.Lotus;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
